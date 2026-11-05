@@ -5,7 +5,8 @@
 -- pieces parts	Catalogue des pièces détachées
 -- pieces_reparation repair_parts	Pièces utilisées lors des réparations
 -- Delete existing tables if needed
-DROP TABLE IF EXISTS customers,
+DROP TABLE IF EXISTS persons,
+customers,
 devices,
 technicians,
 repairs,
@@ -33,7 +34,7 @@ END;
 $$ language plpgsql;
 
 -- Tables creation
-CREATE TABLE customers (
+CREATE TABLE persons (
     id serial,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -42,13 +43,20 @@ CREATE TABLE customers (
     address VARCHAR(200) NOT NULL,
     birth_date date NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    CONSTRAINT persons_pk PRIMARY KEY (id),
+    CONSTRAINT persons_uk_phone_number UNIQUE (phone_number),
+    CONSTRAINT persons_uk_email UNIQUE (email),
+    CONSTRAINT persons_ck_first_name_length CHECK (CHAR_LENGTH(first_name) > 0),
+    CONSTRAINT persons_ck_last_name_length CHECK (CHAR_LENGTH(last_name) > 0),
+    CONSTRAINT persons_ck_email_valid_format CHECK (email ~* '^[A-Z0-9._+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'),
+    CONSTRAINT persons_ck_birth_date_before_today CHECK (birth_date < current_date)
+);
+
+CREATE TABLE customers (
+    id serial,
+    person_id INT NOT NULL,
     CONSTRAINT customers_pk PRIMARY KEY (id),
-    CONSTRAINT customers_uk_phone_number UNIQUE (phone_number),
-    CONSTRAINT customers_uk_email UNIQUE (email),
-    CONSTRAINT customers_ck_first_name_length CHECK (CHAR_LENGTH(first_name) > 0),
-    CONSTRAINT customers_ck_last_name_length CHECK (CHAR_LENGTH(last_name) > 0),
-    CONSTRAINT customers_ck_email_valid_format CHECK (email ~* '^[A-Z0-9._+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'),
-    CONSTRAINT customers_ck_birth_date_before_today CHECK (birth_date < current_date)
+    CONSTRAINT customers_fk_customers_persons FOREIGN key (person_id) REFERENCES persons (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE devices (
@@ -56,7 +64,7 @@ CREATE TABLE devices (
     customer_id INT NOT NULL,
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
-    serial_number VARCHAR(20) NOT NULL, -- Serial numbers can start with zeros
+    serial_number VARCHAR(20) NOT NULL,
     device_type VARCHAR(30) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
     CONSTRAINT devices_pk PRIMARY KEY (id),
@@ -70,20 +78,9 @@ CREATE TABLE devices (
 
 CREATE TABLE technicians (
     id serial,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    email VARCHAR(320) NOT NULL,
-    address VARCHAR(200) NOT NULL,
-    birth_date date NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    person_id INT NOT NULL,
     CONSTRAINT technicians_pk PRIMARY KEY (id),
-    CONSTRAINT technicians_uk_phone_number UNIQUE (phone_number),
-    CONSTRAINT technicians_uk_email UNIQUE (email),
-    CONSTRAINT technicians_ck_first_name_length CHECK (CHAR_LENGTH(first_name) > 0),
-    CONSTRAINT technicians_ck_last_name_length CHECK (CHAR_LENGTH(last_name) > 0),
-    CONSTRAINT technicians_ck_email_valid_format CHECK (email ~* '^[A-Z0-9._+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'),
-    CONSTRAINT technicians_ck_birth_date_before_today CHECK (birth_date < current_date)
+    CONSTRAINT technicians_fk_customers_persons FOREIGN key (person_id) REFERENCES persons (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE repairs (
