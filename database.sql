@@ -1,9 +1,3 @@
--- clients  customers	Informations relatives aux clients
--- appareils devices	Informations sur les appareils déposés
--- techniciens technicians	Informations sur les techniciens
--- reparations repairs	Fiches de réparation
--- pieces parts	Catalogue des pièces détachées
--- pieces_reparation repair_parts	Pièces utilisées lors des réparations
 -- Delete existing tables if needed
 DROP TABLE IF EXISTS persons,
 customers,
@@ -61,7 +55,7 @@ CREATE TABLE customers (
 
 CREATE TABLE devices (
     id serial,
-    customer_id INT NOT NULL,
+    customer_id INT,
     brand VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
     serial_number VARCHAR(20) NOT NULL,
@@ -85,7 +79,7 @@ CREATE TABLE technicians (
 
 CREATE TABLE repairs (
     id serial,
-    device_id INT NOT NULL,
+    device_id INT,
     technician_id INT,
     description TEXT NOT NULL,
     status repair_status NOT NULL DEFAULT 'pending',
@@ -142,7 +136,7 @@ EXECUTE FUNCTION update_updated_at ();
 CREATE TABLE repair_parts (
     id serial,
     repair_id INT NOT NULL,
-    part_id INT NOT NULL,
+    part_id INT,
     quantity INT NOT NULL DEFAULT 1,
     unit_price NUMERIC(7, 2) NOT NULL DEFAULT 0.00,
     CONSTRAINT repair_parts_pk PRIMARY KEY (id),
