@@ -1,128 +1,116 @@
-# Description du projet
+# Project Description
 
-Développer une application en mode console permettant à un atelier de réparation de gérer ses clients, les appareils déposés, les réparations effectuées ainsi que les pièces détachées utilisées.
+Develop a console-based application that allows a repair workshop to manage its customers, deposited devices, repairs performed, and spare parts used.
 
-## Fonctionnalités
+## Features
 
-- Enregistrer de nouveaux clients.
-- Enregistrer les appareils déposés par les clients.
-- Créer des fiches de réparation.
-- Affecter une réparation à un technicien.
-- Modifier le statut d'une réparation.
-- Ajouter les pièces détachées utilisées lors d'une réparation.
-- Calculer automatiquement le coût total d'une réparation.
-- Consulter les réparations terminées ou en attente.
+- Register new customers.
+- Register devices dropped off by customers.
+- Create repair records.
+- Assign repairs to technicians.
+- Update the status of a repair.
+- Add the spare parts used during a repair.
+- Automatically calculate the total cost of a repair.
+- View completed or pending repairs.
 
-## Structure de la base de données
+## Database Structure
 
-| Table | Rôle |
+| Table | Purpose |
 |---|---|
-| clients | Informations relatives aux clients |
-| appareils | Informations sur les appareils déposés |
-| techniciens | Informations sur les techniciens |
-| reparations | Fiches de réparation |
-| pieces | Catalogue des pièces détachées |
-| pieces_reparation | Pièces utilisées lors des réparations |
-
-### Rôle des différentes tables
-
-- `reparations` = ce qu'il faut réparer.
-- `pieces` = les pièces disponibles dans l'atelier.
-- `pieces_reparation` = les pièces réellement utilisées pour chaque réparation.
+| customers | Customer information |
+| devices | Information about deposited devices |
+| technicians | Technician information |
+| repairs | Repair records |
+| repair_comments | Comments related to a repair |
+| parts | Spare parts catalogue |
+| repair_parts | Parts used during repairs |
 
 ---
 
-## Table reparations
+## repairs Table
 
-Cette table contient les informations générales sur chaque réparation.
+This table contains general information about each repair.
 
-Elle représente la fiche de réparation créée lorsqu'un client dépose un appareil.
+It represents the repair record created when a customer drops off a device.
 
-### Exemple
+### Example
 
-| id | appareil_id | technicien_id | description | statut | main_oeuvre |
+| id | device_id | technician_id | description | status | labor_cost | created_at | updated_at |
+|---|---|---|---|---|---|---|---|
+| 1 | 3 | 2 | Screen replacement | In Progress | €45 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
+| 2 | 5 | 1 | Battery issue | Completed | €30 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
+
+- Which device needs to be repaired.
+- Which technician is responsible for the repair.
+- What problem has been reported.
+- The current status of the repair.
+- How much the labour costs.
+
+---
+
+## parts Table
+
+This table contains the catalogue of spare parts available in the workshop.
+
+### Example
+
+| id | name | unit_price | stock_quantity | created_at | updated_at |
 |---|---|---|---|---|---|
-| 1 | 3 | 2 | Remplacement écran | En cours | 45 € |
-| 2 | 5 | 1 | Problème batterie | Terminée | 30 € |
+| 1 | 15-inch Computer Screen | 120 | 5 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
+| 2 | Computer Battery | 65 | 10 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
+| 3 | 500 GB SSD Drive | 55 | 8 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
+| 4 | Computer Keyboard | 40 | 3 | 05-11-26 00:00:00 | 05-11-26 00:00:00 |
 
-### Elle permet de savoir :
-
-- Quel appareil doit être réparé.
-- Quel technicien s'en occupe.
-- Quel est le problème rencontré.
-- Où en est la réparation.
-- Combien coûte la main-d'œuvre.
-
-**En résumé :** c'est la fiche qui décrit le travail à effectuer.
+- Keep track of available spare parts.
+- Know the price of each part.
+- Check the quantities available in stock.
+- Update spare part information.
 
 ---
 
-## Table pieces
+## repair_parts Table
 
-Cette table contient le catalogue des pièces détachées disponibles dans l'atelier.
+It is used to create a link between repairs and the spare parts used.
 
-### Exemple
+The `repair_tables` table records which parts were used for each repair and in what quantities.
 
-| id | nom | prix_unitaire | quantite_stock |
-|---|---|---|---|
-| 1 | Écran ordinateur 15 pouces | 120 € | 5 |
-| 2 | Batterie ordinateur | 65 € | 10 |
-| 3 | Disque SSD 500 Go | 55 € | 8 |
-| 4 | Clavier ordinateur | 40 € | 3 |
+### Example
 
-### Elle permet de :
+| id | repair_id | part_id | quantity | unit_price |
+|---|---|---|---|---|
+| 1 | 1 | 1 | 1 | 120 |
+| 2 | 1 | 4 | 1 | 40 |
+| 3 | 2 | 2 | 1 | 65 |
+| 4 | 2 | 3 | 1 | 55 |
 
-- Répertorier les pièces disponibles.
-- Connaître leur prix.
-- Connaître les quantités en stock.
-- Modifier les informations d'une pièce.
+- Repair 1: one screen and one keyboard were used.
+- Repair 2: one battery and one SSD drive were used.
 
----
-
-## Table pieces_reparation
-
-C'est probablement la table la moins évidente à comprendre.
-
-Elle sert à faire le lien entre les réparations et les pièces utilisées.
-
-La table `pieces_reparation` permet d'enregistrer quelles pièces ont été utilisées pour quelle réparation, et en quelle quantité.
-
-### Exemple
-
-| id | reparation_id | piece_id | quantite |
-|---|---|---|---|
-| 1 | 1 | 1 | 1 |
-| 2 | 1 | 4 | 1 |
-| 3 | 2 | 2 | 1 |
-| 4 | 2 | 3 | 1 |
-
-### Cela signifie :
-
-- Réparation 1 : un écran et un clavier ont été utilisés.
-- Réparation 2 : une batterie et un disque SSD ont été utilisés.
+Note: It also keeps the unit price at the moment of adding it to the repair in case the price of the part changes after adding it.
 
 ---
 
-## Exemple de calcul du coût d'une réparation
+## Example of a Repair Cost Calculation
 
-Prenons la réparation numéro 1 :
+Let's take repair number 1:
 
-| Élément | Prix |
+| Item | Price |
 |---|---:|
-| Main-d'œuvre | 45 € |
-| Écran | 120 € |
-| Clavier | 40 € |
-| **Total** | **205 €** |
+| Labour | €45 |
+| Screen | €120 |
+| Keyboard | €40 |
+| **Total** | **€205** |
 
-Le coût total est calculé automatiquement en additionnant :
+The total cost is calculated automatically by adding:
 
-- Le coût de la main-d'œuvre.
-- Le prix de chaque pièce utilisée, multiplié par sa quantité.
+- The labour cost.
+- The price of each spare part used, multiplied by its quantity.
 
-**Formule :**
+**Formula:**
 
 ```text
-Coût total = Main-d'œuvre + Somme(prix des pièces × quantités utilisées)
+Total Cost = Labour Cost + Sum(Part Prices × Quantities Used)
 
-Coût total = 45 + (120 × 1) + (40 × 1)
-Coût total = 205 €
+Total Cost = 45 + (120 × 1) + (40 × 1)
+Total Cost = €205
+```
