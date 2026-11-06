@@ -9,15 +9,19 @@ class Part:
         description: str,
         unit_price: float,
         stock_quantity: int,
-        created_at: datetime,
-        updated_at: datetime,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
     ):
         self.id = id
         self.name = name
         self.description = description
-        self.unit_price = unit_price
+        self.unit_price = float(unit_price)
         self.stock_quantity = stock_quantity
+        if created_at is None:
+            created_at = datetime.now()
         self.created_at = created_at
+        if updated_at is None:
+            updated_at = datetime.now()
         self.updated_at = updated_at
 
     @property
@@ -108,3 +112,31 @@ class Part:
             raise ValueError("Update date cannot be earlier than creation date.")
 
         self.__updated_at = updated_at
+
+    @classmethod
+    def valid_name(cls, value):
+        if not value.strip():
+            raise ValueError("Name cannot be empty.")
+
+    @classmethod
+    def valid_description(cls, value):
+        if not value.strip():
+            raise ValueError("Description cannot be empty.")
+
+    @classmethod
+    def valid_unit_price(cls, value):
+        try:
+            value = float(value)
+            if value < 0:
+                raise ValueError("Unit price must be equal or greater than zero.")
+        except ValueError:
+            raise ValueError("Unit price must be a number")
+
+    @classmethod
+    def valid_stock_quantity(cls, value):
+        try:
+            value = int(value)
+            if value < 0:
+                raise ValueError("Stock quantity must be equal or greater than zero.")
+        except ValueError:
+            raise ValueError("Stock quantity must be an integer.")

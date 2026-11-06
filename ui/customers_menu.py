@@ -270,7 +270,7 @@ class CustomersMenu:
 
         while True:
             try:
-                choice = int(input("Choose the customer to update: "))
+                choice = int(input("Choose the customer to delete: "))
 
                 if choice in ids:
                     break

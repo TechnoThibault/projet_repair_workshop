@@ -21,7 +21,9 @@ class Helpers:
         Shows an input to the user with a default/previous value between []. If the user presses Enter without any character, it will return the previous value, otherwise it will use the provided validator function.
         """
         while True:
-            value = input(f"{question} [{previous_value}]: ").strip()
+            value = input(
+                f"{question} [{previous_value if len(str(previous_value)) <= 30 else "..."}]: "
+            ).strip()
             # User has pressed Enter with an empty string, return the previous/default value.
             if not value:
                 return previous_value
