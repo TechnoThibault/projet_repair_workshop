@@ -68,3 +68,9 @@ class Helpers:
         # Print each row and column using the width
         for row in rows:
             print(" | ".join(f"{value!s:<{widths[i]}}" for i, value in enumerate(row)))
+
+    @staticmethod
+    def header(title: str):
+        print(
+            f"\n==================================================================== {title} ===================================================================="
+        )

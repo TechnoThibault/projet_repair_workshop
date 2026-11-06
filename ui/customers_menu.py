@@ -37,7 +37,7 @@ class CustomersMenu:
         """
         customers = CustomersRepository.get_customers()
 
-        self.header("CUSTOMERS")
+        Helpers.header("CUSTOMERS")
 
         if not customers:
             print("No customers found.")
@@ -69,7 +69,7 @@ class CustomersMenu:
         """
         Add a new customer to the database. Every input must be validated before being accepted.
         """
-        self.header("REGISTER CUSTOMER")
+        Helpers.header("REGISTER CUSTOMER")
         print("Enter data concerning the user:")
 
         first_name = Helpers.get_validated_input(
@@ -117,7 +117,7 @@ class CustomersMenu:
         """
         Update an existing customer with new data. Each field can be modified, and if the user enters an empty string, the previous value will be used.
         """
-        self.header("UPDATE CUSTOMER")
+        Helpers.header("UPDATE CUSTOMER")
 
         customers = CustomersRepository.get_customers()
 
@@ -171,7 +171,7 @@ class CustomersMenu:
             print("There was an issue retrieving the customer.")
             return
 
-        self.header("CUSTOMER INFORMATION")
+        Helpers.header("CUSTOMER INFORMATION")
 
         first_name = Helpers.get_optional_input(
             "First name",
@@ -234,7 +234,7 @@ class CustomersMenu:
         """
         Delete a customer from the database based on its id. Demands confirmation from the user before  commiting.
         """
-        self.header("DELETE CUSTOMER")
+        Helpers.header("DELETE CUSTOMER")
 
         customers = CustomersRepository.get_customers()
 
@@ -290,7 +290,7 @@ class CustomersMenu:
 
         choices = {"y", "n", ""}
 
-        self.header("CUSTOMER INFORMATION")
+        Helpers.header("CUSTOMER INFORMATION")
         print(customer)
 
         while True:
@@ -317,6 +317,3 @@ class CustomersMenu:
                 print("No customer has been deleted.")
         except psycopg.Error:
             print("There was an issue deleting the user.")
-
-    def header(self, title: str):
-        print(f"\n=== {title} ===")

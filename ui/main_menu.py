@@ -1,6 +1,7 @@
 from .customers_menu import CustomersMenu
 from .menu import Menu
 from .parts_menu import PartsMenu
+from .technicians_menu import TechniciansMenu
 
 
 class MainMenu:
@@ -20,6 +21,10 @@ class MainMenu:
                 ),  # As the action is not a method in itself, needs to be called as a lambda
             },
             "2": {
+                "description": "Technicians",
+                "action": lambda: TechniciansMenu("Technicians Menu"),
+            },
+            "3": {
                 "description": "Parts",
                 "action": lambda: PartsMenu("Parts Menu"),
             },

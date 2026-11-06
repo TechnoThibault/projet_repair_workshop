@@ -35,7 +35,7 @@ class PartsMenu:
         """
         parts = PartsRepository.get_parts()
 
-        self.header("PARTS")
+        Helpers.header("PARTS")
 
         if not parts:
             print("No parts found.")
@@ -65,7 +65,7 @@ class PartsMenu:
         """
         Add a new part to the database. Every input must be validated before being accepted.
         """
-        self.header("REGISTER PART")
+        Helpers.header("REGISTER PART")
         print("Enter data concerning the part:")
 
         name = Helpers.get_validated_input("Name: ", Part.valid_name)
@@ -94,7 +94,7 @@ class PartsMenu:
         """
         Update an existing part with new data. Each field can be modified, and if the user enters an empty string, the previous value will be used.
         """
-        self.header("UPDATE PART")
+        Helpers.header("UPDATE PART")
 
         parts = PartsRepository.get_parts()
 
@@ -144,7 +144,7 @@ class PartsMenu:
             print("There was an issue retrieving the part.")
             return
 
-        self.header("PART INFORMATION")
+        Helpers.header("PART INFORMATION")
 
         name = Helpers.get_optional_input(
             "Name",
@@ -190,7 +190,7 @@ class PartsMenu:
         """
         Delete a part from the database based on its id. Demands confirmation from the user before  commiting.
         """
-        self.header("DELETE PART")
+        Helpers.header("DELETE PART")
 
         parts = PartsRepository.get_parts()
 
@@ -242,7 +242,7 @@ class PartsMenu:
 
         choices = {"y", "n", ""}
 
-        self.header("PART INFORMATION")
+        Helpers.header("PART INFORMATION")
         print(part)
 
         while True:

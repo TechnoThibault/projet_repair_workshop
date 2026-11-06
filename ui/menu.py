@@ -1,5 +1,7 @@
 import os
 
+from helpers import Helpers
+
 
 class Menu:
     """
@@ -13,7 +15,7 @@ class Menu:
 
     def display(self):
         self.__clear_screen()
-        print(f"=== {self.title} ===")
+        Helpers.header(self.title)
 
         for key, value in self.options.items():
             print(f" {key}. {value['description']}")
