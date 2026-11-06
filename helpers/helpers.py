@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 class Helpers:
     @classmethod
     def get_validated_input(cls, question, validator_function):
@@ -48,6 +51,18 @@ class Helpers:
         if attributes:
             rows = [tuple(getattr(row, attr) for attr in attributes) for row in rows]
 
+            # Convert enum values to their actual values
+        rows = [
+            tuple(
+                (
+                    value.value.capitalize().replace("_", " ")
+                    if isinstance(value, Enum)
+                    else value
+                )
+                for value in row
+            )
+            for row in rows
+        ]
         # Generate the width of each column based on the length of the max value inside each of them
         widths = [
             max(

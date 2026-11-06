@@ -12,12 +12,12 @@ class Repair:
         self,
         id: int,
         device: Device,
-        technician: Technician,
         description: str,
         status: RepairStatus,
         labor_cost: float,
         created_at: datetime,
         updated_at: datetime,
+        technician: Technician | None = None,
         parts: list[RepairPart] | None = None,
         comments: list[RepairComment] | None = None,
     ):
@@ -75,7 +75,7 @@ class Repair:
 
     @technician.setter
     def technician(self, technician: Technician):
-        if not isinstance(technician, Technician):
+        if technician and not isinstance(technician, Technician):
             raise TypeError("Technician must be a Technician instance.")
         self.__technician = technician
 
