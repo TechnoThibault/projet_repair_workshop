@@ -4,6 +4,7 @@ from datetime import datetime
 class Part:
     def __init__(
         self,
+        id: int,
         name: str,
         description: str,
         unit_price: float,
@@ -11,12 +12,23 @@ class Part:
         created_at: datetime,
         updated_at: datetime,
     ):
+        self.id = id
         self.name = name
         self.description = description
         self.unit_price = unit_price
         self.stock_quantity = stock_quantity
         self.created_at = created_at
         self.updated_at = updated_at
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def name(self) -> str:

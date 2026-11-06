@@ -6,6 +6,7 @@ from models.customer import Customer
 class Device:
     def __init__(
         self,
+        id: int,
         customer: Customer,
         brand: str,
         model: str,
@@ -13,12 +14,23 @@ class Device:
         device_type: str,
         created_at: datetime,
     ):
+        self.id = id
         self.customer = customer
         self.brand = brand
         self.model = model
         self.serial_number = serial_number
         self.device_type = device_type
         self.created_at = created_at
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def customer(self) -> Customer:

@@ -6,15 +6,27 @@ from models.technician import Technician
 class RepairComment:
     def __init__(
         self,
+        id: int,
         technician: Technician,
         comment: str,
         created_at: datetime,
         updated_at: datetime,
     ):
+        self.id = id
         self.technician = technician
         self.comment = comment
         self.created_at = created_at
         self.updated_at = updated_at
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def technician(self) -> Technician:

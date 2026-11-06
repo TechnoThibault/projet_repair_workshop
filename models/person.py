@@ -5,24 +5,35 @@ from datetime import date, datetime
 class Person:
     def __init__(
         self,
+        id: int,
         first_name: str,
         last_name: str,
         phone_number: str,
         email: str,
         address: str,
         birth_date: date,
-        created_at: datetime,
+        created_at: datetime | None = None,
     ):
+        self.id = id
         self.first_name = first_name
         self.last_name = last_name
         self.phone_number = phone_number
         self.email = email
         self.address = address
         self.birth_date = birth_date
+        if created_at is None:
+            created_at = datetime.now()
         self.created_at = created_at
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} | {self.email}"
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def first_name(self) -> str:
@@ -53,8 +64,11 @@ class Person:
         if not isinstance(phone_number, str):
             raise TypeError("Phone number must be a string.")
 
-        if not re.fullmatch(r"\+?[0-9\s().-]{7,20}", phone_number):
-            raise ValueError("Invalid phone number format.")
+        if not re.fullmatch(r"\+?[0-9\s()-]{8,20}", phone_number):
+            raise ValueError(
+                "Invalid phone number. Please enter a valid phone number "
+                "(e.g. +32 470 12 34 56)."
+            )
         self.__phone_number = phone_number
 
     @property
@@ -106,3 +120,37 @@ class Person:
         if created_at > datetime.now():
             raise ValueError("Creation date cannot be in the future.")
         self.__created_at = created_at
+
+    @classmethod
+    def validate_first_name(cls, value):
+        if not value.strip():
+            raise ValueError("First name cannot be empty.")
+
+    @classmethod
+    def validate_last_name(cls, value):
+        if not value.strip():
+            raise ValueError("Last name cannot be empty.")
+
+    @classmethod
+    def validate_email(cls, value):
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value):
+            raise ValueError("Invalid email address.")
+
+    @classmethod
+    def validate_phone_number(cls, value):
+        if not re.fullmatch(r"\+?[0-9\s()-]{8,20}", value):
+            raise ValueError("Invalid phone number.")
+
+    @classmethod
+    def validate_address(cls, value):
+        if not value.strip():
+            raise ValueError("The address cannot")
+
+    @classmethod
+    def validate_birth_date(cls, value):
+        try:
+            valid_date = datetime.strptime(value, "%d/%m/%Y")
+            if valid_date.date() >= datetime.now().date():
+                raise ValueError("Invalid date format.")
+        except ValueError:
+            raise ValueError("Invalid date format.")

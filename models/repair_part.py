@@ -2,10 +2,21 @@ from models.part import Part
 
 
 class RepairPart:
-    def __init__(self, part: Part, quantity: int, unit_price: float):
+    def __init__(self, id: int, part: Part, quantity: int, unit_price: float):
+        self.id = id
         self.part = part
         self.quantity = quantity
         self.unit_price = unit_price
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def part(self) -> Part:

@@ -10,6 +10,7 @@ from models.technician import Technician
 class Repair:
     def __init__(
         self,
+        id: int,
         device: Device,
         technician: Technician,
         description: str,
@@ -20,6 +21,7 @@ class Repair:
         parts: list[RepairPart] | None = None,
         comments: list[RepairComment] | None = None,
     ):
+        self.id = id
         self.device = device
         self.technician = technician
         self.description = description
@@ -46,6 +48,16 @@ class Repair:
                 if not isinstance(comment, RepairComment):
                     raise TypeError("Every item in comments must be a RepairComment.")
             self.__comments = comments.copy()
+
+    @property
+    def id(self) -> int:
+        return self.__id
+
+    @id.setter
+    def id(self, id: int):
+        if not isinstance(id, int):
+            raise TypeError("The ID must be a integer.")
+        self.__id = id
 
     @property
     def device(self) -> Device:
