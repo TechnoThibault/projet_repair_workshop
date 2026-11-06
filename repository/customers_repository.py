@@ -81,3 +81,17 @@ class CustomersRepository:
             rows_count = cursor.rowcount
 
             return rows_count
+
+    @classmethod
+    def delete_customer(cls, customer: Customer):
+        with Database().connection.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM PERSONS
+                WHERE id = %s
+                """,
+                (customer.id,),
+            )
+
+            rows_count = cursor.rowcount
+            return rows_count

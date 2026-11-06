@@ -25,6 +25,9 @@ class Person:
             created_at = datetime.now()
         self.created_at = created_at
 
+    def __str__(self):
+        return f"\n - First name: {self.first_name}\n - Last name: {self.last_name}\n - Phone number: {self.phone_number}\n - Email: {self.email}"
+
     @property
     def id(self) -> int:
         return self.__id

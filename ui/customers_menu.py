@@ -27,6 +27,7 @@ class CustomersMenu:
                 "description": "Update an existing customer",
                 "action": self.update_customer,
             },
+            "4": {"description": "Delete a customer", "action": self.delete_customer},
         }
         Menu(self.title, self.menu_actions).get_choice()
 
@@ -92,6 +93,7 @@ class CustomersMenu:
         )
 
         customer = Customer(
+            0,
             first_name,
             last_name,
             phone_number,
@@ -103,7 +105,7 @@ class CustomersMenu:
         try:
             CustomersRepository.register_customer(customer)
 
-            print("Customercreated.")
+            print("Customer created.")
         # Emails and phone numbers are unique.
         except psycopg.errors.UniqueViolation as e:
             if e.diag.constraint_name == "persons_uk_email":
@@ -227,6 +229,94 @@ class CustomersMenu:
                 print("This email address is already registered.")
             elif e.diag.constraint_name == "persons_uk_phone_number":
                 print("This phone number is already registered.")
+
+    def delete_customer(self):
+        """
+        Delete a customer from the database based on its id. Demands confirmation from the user before  commiting.
+        """
+        self.header("DELETE CUSTOMER")
+
+        customers = CustomersRepository.get_customers()
+
+        ids = {customer.id for customer in customers}
+
+        if not customers:
+            print("No customers found.")
+            return
+
+        Helpers.display_table(
+            headers=(
+                "ID",
+                "FIRST NAME",
+                "LAST NAME",
+                "PHONE NUMBER",
+                "EMAIL",
+                "ADDRESS",
+                "BIRTH DATE",
+                "CREATION DATE",
+            ),
+            rows=customers,
+            attributes=(
+                "id",
+                "first_name",
+                "last_name",
+                "phone_number",
+                "email",
+                "address",
+                "birth_date",
+                "created_at",
+            ),
+        )
+
+        while True:
+            try:
+                choice = int(input("Choose the customer to update: "))
+
+                if choice in ids:
+                    break
+
+                print("Please choose a valid customer number.")
+
+            except ValueError:
+                print("You must enter a number.")
+
+        customer = next(
+            (customer for customer in customers if customer.id == choice), None
+        )
+
+        if customer is None:
+            print("There was an issue retrieving the customer.")
+            return
+
+        choices = {"y", "n", ""}
+
+        self.header("CUSTOMER INFORMATION")
+        print(customer)
+
+        while True:
+
+            choice = input(
+                "Are you sure you want to delete this customer? [y/N] "
+            ).lower()
+
+            if choice in choices:
+                break
+
+            print("Only valid choices are : 'y', 'n', ''.")
+
+        if choice in ("n", ""):
+            print("Deletion cancelled.")
+            return
+
+        try:
+            rows_count = CustomersRepository.delete_customer(customer)
+
+            if rows_count > 0:
+                print("Customer successfully deleted.")
+            else:
+                print("No customer has been deleted.")
+        except psycopg.Error:
+            print("There was an issue deleting the user.")
 
     def header(self, title: str):
         print(f"\n=== {title} ===")
