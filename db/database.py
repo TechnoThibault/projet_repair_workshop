@@ -11,6 +11,8 @@ class Database:
 
     _instance = None
 
+    _connection = None
+
     def __new(cls):
         """Only one instance of the database is needed through the whole project.
 

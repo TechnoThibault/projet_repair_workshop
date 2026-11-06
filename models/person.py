@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 
 
 class Person:
@@ -10,7 +10,7 @@ class Person:
         phone_number: str,
         email: str,
         address: str,
-        birth_date: datetime,
+        birth_date: date,
         created_at: datetime,
     ):
         self.first_name = first_name
@@ -20,6 +20,9 @@ class Person:
         self.address = address
         self.birth_date = birth_date
         self.created_at = created_at
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} | {self.email}"
 
     @property
     def first_name(self) -> str:
@@ -78,15 +81,15 @@ class Person:
         self.__address = address
 
     @property
-    def birth_date(self) -> datetime:
+    def birth_date(self) -> date:
         return self.__birth_date
 
     @birth_date.setter
-    def birth_date(self, birth_date: datetime):
-        if not isinstance(birth_date, datetime):
+    def birth_date(self, birth_date: date):
+        if not isinstance(birth_date, date):
             raise TypeError("Birth date must be a datetime object.")
 
-        if birth_date > datetime.now():
+        if birth_date > datetime.now().date():
             raise ValueError("Birth date cannot be in the future.")
 
         self.__birth_date = birth_date
