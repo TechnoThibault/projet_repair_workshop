@@ -113,7 +113,7 @@ class RepairsRepository:
                 query += " WHERE r.status = %s "
                 params = (status,)
 
-            query += "ORDER BY r.status"
+            query += "ORDER BY r.id"
 
             cursor.execute(query, params)
 

@@ -49,6 +49,22 @@ class Repair:
                     raise TypeError("Every item in comments must be a RepairComment.")
             self.__comments = comments.copy()
 
+    def __str__(self) -> str:
+        technician = str(self.technician) if self.technician else "Unassigned"
+        header = f"========================================================================================   Repair #{self.id}   ========================================================================================="
+        return (
+            f"\n\n{header}"
+            f"\n{self.description}"
+            f"\n\n{self.status.name.replace('_', ' ').title()} | "
+            f" Labor: €{self.labor_cost:.2f} | "
+            f"Created: {self.created_at:%Y-%m-%d}\n"
+            f"│\n"
+            f"├── Technician: {technician}\n"
+            f"│\n"
+            f"└── Device: {self.device}\n"
+            f"{"=" * len(header)}"
+        )
+
     @property
     def id(self) -> int:
         return self.__id

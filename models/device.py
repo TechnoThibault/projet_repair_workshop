@@ -22,6 +22,13 @@ class Device:
         self.device_type = device_type
         self.created_at = created_at
 
+    def __str__(self) -> str:
+        return (
+            f"{self.brand} {self.model} | Serial: {self.serial_number} | Device type: {self.device_type} | Created: {self.created_at}\n"
+            f"    │\n"
+            f"    └── Customer: {self.customer}"
+        )
+
     @property
     def id(self) -> int:
         return self.__id
