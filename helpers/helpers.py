@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from enum import Enum
 
 
@@ -51,23 +52,26 @@ class Helpers:
         if attributes:
             rows = [tuple(getattr(row, attr) for attr in attributes) for row in rows]
 
-            # Convert enum values to their actual values
-        rows = [
-            tuple(
-                (
-                    value.value.capitalize().replace("_", " ")
-                    if isinstance(value, Enum)
-                    else value
-                )
-                for value in row
-            )
-            for row in rows
-        ]
-        # Generate the width of each column based on the length of the max value inside each of them
+        def format_value(value):
+            if isinstance(value, datetime):
+                return value.strftime("%d/%m/%Y %H:%M:%S")
+
+            if isinstance(value, date):
+                return value.strftime("%d/%m/%Y")
+
+            if isinstance(value, Enum):
+                return value.value.capitalize().replace("_", " ")
+
+            return str(value) if value is not None else ""
+
+        # Format all values before calculating column widths.
+        rows = [tuple(format_value(value) for value in row) for row in rows]
+
+        # Calculate column widths.
         widths = [
             max(
                 len(str(headers[i])),
-                max(len(str(row[i])) for row in rows),
+                max(len(row[i]) for row in rows),
             )
             for i in range(len(headers))
         ]
@@ -82,10 +86,18 @@ class Helpers:
 
         # Print each row and column using the width
         for row in rows:
-            print(" | ".join(f"{value!s:<{widths[i]}}" for i, value in enumerate(row)))
+            print(" | ".join(f"{value:<{widths[i]}}" for i, value in enumerate(row)))
 
     @staticmethod
     def header(title: str):
         print(
             f"\n==================================================================== {title} ===================================================================="
         )
+
+    @staticmethod
+    def format_datetime(value: datetime):
+        return value.strftime("%d/%m/%Y %H:%M:%S")
+
+    @staticmethod
+    def format_date(value: date):
+        return value.strftime("%d/%m/%Y")

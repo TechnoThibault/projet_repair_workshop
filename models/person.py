@@ -1,6 +1,8 @@
 import re
 from datetime import date, datetime
 
+from helpers import Helpers
+
 
 class Person:
     def __init__(
@@ -26,7 +28,7 @@ class Person:
         self.created_at = created_at
 
     def __str__(self):
-        return f"First name: {self.first_name} | Last name: {self.last_name} | Phone number: {self.phone_number} | Email: {self.email} | Address: {self.address} | Birth date: {self.birth_date} | Created: {self.created_at}"
+        return f"First name: {self.first_name} | Last name: {self.last_name} | Phone number: {self.phone_number} | Email: {self.email} | Address: {self.address} | Birth date: {self.birth_date.strftime("%d/%m/%Y")} | Created: {Helpers.format_datetime(self.created_at)}"
 
     @property
     def id(self) -> int:

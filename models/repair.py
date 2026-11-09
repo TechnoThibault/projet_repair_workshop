@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from helpers import Helpers
 from models.device import Device
 from models.enums import RepairStatus
 from models.repair_comment import RepairComment
@@ -64,18 +65,16 @@ class Repair:
 
         separator = "=" * len(header)
 
-        total_parts_cost = sum(part.quantity * part.unit_price for part in self.parts)
-
         return (
             f"\n\n{header}"
             f"\n\n{self.description}"
             f"\n\n"
             f"Status: {self.status.name.replace('_', ' ').title()} | "
             f"Labor: €{self.labor_cost:.2f} | "
-            f"Parts: €{total_parts_cost:.2f}"
-            f"\nTotal: €{self.labor_cost + total_parts_cost:.2f}"
-            f"\nCreated: {self.created_at:%Y-%m-%d %H:%M} | "
-            f"Updated: {self.updated_at:%Y-%m-%d %H:%M}"
+            f"Parts: €{self.total_parts_cost:.2f}"
+            f"\nTotal: €{self.total_cost:.2f}"
+            f"\nCreated: {Helpers.format_datetime(self.created_at)} | "
+            f"Updated: {Helpers.format_datetime(self.updated_at)}"
             f"\n"
             f"│"
             f"\n├── Technician: {technician}"
@@ -90,6 +89,14 @@ class Repair:
             f"{''.join(str(comment) for comment in self.comments) if self.comments else chr(10) + '    └── No comments.'}"
             f"\n{separator}"
         )
+
+    @property
+    def total_parts_cost(self):
+        return sum(part.quantity * part.unit_price for part in self.parts)
+
+    @property
+    def total_cost(self):
+        return self.labor_cost + self.total_parts_cost
 
     @property
     def id(self) -> int:

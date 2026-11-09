@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from helpers.helpers import Helpers
 from models.customer import Customer
 
 
@@ -26,7 +27,7 @@ class Device:
 
     def __str__(self) -> str:
         return (
-            f"{self.brand} {self.model} | Serial: {self.serial_number} | Device type: {self.device_type} | Created: {self.created_at}\n"
+            f"{self.brand} {self.model} | Serial: {self.serial_number} | Device type: {self.device_type} | Created: {Helpers.format_datetime(self.created_at)}\n"
             f"│   │\n"
             f"│   └── Customer: {self.customer}"
         )

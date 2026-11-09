@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from helpers import Helpers
 from models.technician import Technician
 
 
@@ -31,8 +32,8 @@ class RepairComment:
             f"\n    │   {self.comment}"
             f"\n    │"
             f"\n    ├── Technician: {technician}"
-            f"\n    ├── Created: {self.created_at:%Y-%m-%d %H:%M}"
-            f"\n    └── Updated: {self.updated_at:%Y-%m-%d %H:%M}"
+            f"\n    ├── Created: {Helpers.format_datetime(self.created_at)}"
+            f"\n    └── Updated: {Helpers.format_datetime(self.updated_at)}"
         )
 
     @property
