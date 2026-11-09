@@ -119,4 +119,13 @@ class RepairPartsRepository:
 
             repair_part.id = cursor.fetchone()[0]
 
-        return repair_part
+            cursor.execute(
+                """
+                UPDATE parts
+                set stock_quantity = stock_quantity - %s
+                where id = %s
+                """,
+                (repair_part.quantity, repair_part.part.id),
+            )
+
+            return repair_part
