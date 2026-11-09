@@ -11,10 +11,23 @@ from .menu import Menu
 
 class TechniciansMenu:
     """
-    Menu allowing an user to search, modify, add or delete data about technicians.
+    Menu allowing users to search, consult, register, update, and delete
+    technician records.
+
+    Provides an interface to manage technician information, including
+    personal details and contact information.
     """
 
     def __init__(self, title: str):
+        """
+        Initializes the technicians menu.
+
+        Sets the menu title, defines the available actions, and launches
+        the menu interface.
+
+        Args:
+            title (str): The title displayed at the top of the menu.
+        """
         self.title = title
         self.menu_actions = {
             "0": {"description": "Close this menu", "action": "back"},
@@ -39,7 +52,13 @@ class TechniciansMenu:
 
     def show_technicians(self):
         """
-        Show a list of all the technicians to the user.
+        Retrieves and displays all registered technicians.
+
+        Fetches technician records through the TechniciansRepository
+        and displays their personal and contact information in a
+        formatted table.
+
+        If no technicians are found, displays an appropriate message.
         """
         technicians = TechniciansRepository.get_technicians()
 
@@ -73,7 +92,18 @@ class TechniciansMenu:
 
     def add_technician(self):
         """
-        Add a new technician to the database. Every input must be validated before being accepted.
+        Registers a new technician in the database.
+
+        Prompts the user to enter the technician's personal and contact
+        information. Each input is validated before being accepted.
+
+        Converts the birth date from DD/MM/YYYY format into a date object
+        and constructs a Technician instance.
+
+        Registers the technician through the TechniciansRepository.
+
+        Handles unique constraint violations for email addresses
+        and phone numbers by displaying an appropriate error message.
         """
         Helpers.header("REGISTER TECHNICIAN")
         print("Enter data concerning the user:")
@@ -121,7 +151,23 @@ class TechniciansMenu:
 
     def update_technician(self):
         """
-        Update an existing technician with new data. Each field can be modified, and if the user enters an empty string, the previous value will be used.
+        Updates the information of an existing technician.
+
+        Retrieves and displays all registered technicians, then prompts
+        the user to select one using its ID.
+
+        Allows the user to modify each personal and contact information
+        field individually. If an input is left empty, the existing
+        value is retained.
+
+        Validates the updated information and constructs a new
+        Technician instance before sending it to the repository.
+
+        Displays a success message if the update is successful,
+        or an appropriate message if no record is updated.
+
+        Handles unique constraint violations for email addresses
+        and phone numbers.
         """
         Helpers.header("UPDATE TECHNICIAN")
 
@@ -238,7 +284,20 @@ class TechniciansMenu:
 
     def delete_technician(self):
         """
-        Delete a technician from the database based on its id. Demands confirmation from the user before  commiting.
+        Deletes an existing technician from the database.
+
+        Retrieves and displays all registered technicians, then prompts
+        the user to select the technician to delete using its ID.
+
+        Displays the selected technician's information and requests
+        confirmation before proceeding with the deletion.
+
+        If the user cancels the operation, no changes are made.
+
+        Calls the TechniciansRepository to delete the selected technician
+        and displays an appropriate success or failure message.
+
+        Handles database errors that may occur during deletion.
         """
         Helpers.header("DELETE TECHNICIAN")
 
@@ -325,4 +384,10 @@ class TechniciansMenu:
             print("There was an issue deleting the user.")
 
     def header(self, title: str):
+        """
+        Displays a formatted header in the terminal.
+
+        Args:
+            title (str): The title to display between separator lines.
+        """
         print(f"\n=== {title} ===")

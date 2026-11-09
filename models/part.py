@@ -24,6 +24,9 @@ class Part:
             updated_at = datetime.now()
         self.updated_at = updated_at
 
+    def __str__(self):
+        return f"{self.name} | {self.description}"
+
     @property
     def id(self) -> int:
         return self.__id

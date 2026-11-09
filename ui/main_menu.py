@@ -7,11 +7,27 @@ from .technicians_menu import TechniciansMenu
 
 class MainMenu:
     """
-    Menu shown to the user when the application launches.
-    Allows the user to navigate between the different modules of the application.
+    Main menu displayed when the application starts.
+
+    Provides navigation to the different modules of the application,
+    allowing users to manage customers, technicians, parts, and repairs,
+    or close the application.
     """
 
     def __init__(self, title: str):
+        """
+        Initializes and displays the main application menu.
+
+        Sets the menu title, defines the available actions, and associates
+        each menu option with the corresponding submenu or application
+        closing action.
+
+        Submenus are instantiated through lambda functions to ensure
+        they are only created when the corresponding option is selected.
+
+        Args:
+            title (str): The title displayed at the top of the main menu.
+        """
         self.title = title
         self.menu_actions = {
             "0": {"description": "Close the application", "action": "close"},

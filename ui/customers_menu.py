@@ -11,10 +11,19 @@ from .menu import Menu
 
 class CustomersMenu:
     """
-    Menu allowing an user to search, modify, add or delete data about customers.
+    Menu allowing users to search, modify, add, and delete customer records.
     """
 
     def __init__(self, title: str):
+        """
+        Initializes the customers menu.
+
+        Sets the menu title, defines the available actions, and displays
+        the menu to allow users to manage customer records.
+
+        Args:
+            title (str): The title displayed at the top of the menu.
+        """
         self.title = title
         self.menu_actions = {
             "0": {"description": "Close this menu", "action": "back"},
@@ -33,7 +42,11 @@ class CustomersMenu:
 
     def show_customers(self):
         """
-        Show a list of all the customers to the user.
+        Displays all customers stored in the database.
+
+        Retrieves the customer records through the CustomersRepository
+        and displays them in a formatted table. If no customers are found,
+        an informational message is displayed.
         """
         customers = CustomersRepository.get_customers()
 
@@ -67,7 +80,17 @@ class CustomersMenu:
 
     def add_customer(self):
         """
-        Add a new customer to the database. Every input must be validated before being accepted.
+        Registers a new customer in the database.
+
+        Prompts the user to enter the customer's personal information.
+        Each input is validated before being used to construct a Customer
+        instance.
+
+        Converts the birth date from DD/MM/YYYY format into a date object
+        before registering the customer.
+
+        Handles unique constraint violations for email addresses and
+        phone numbers by displaying an appropriate error message.
         """
         Helpers.header("REGISTER CUSTOMER")
         print("Enter data concerning the user:")
@@ -115,7 +138,20 @@ class CustomersMenu:
 
     def update_customer(self):
         """
-        Update an existing customer with new data. Each field can be modified, and if the user enters an empty string, the previous value will be used.
+        Updates an existing customer's information.
+
+        Retrieves and displays all customers, then prompts the user
+        to select the customer to update.
+
+        Allows the user to modify individual fields while retaining
+        their existing values when an empty input is provided.
+        Each new value is validated before being accepted.
+
+        Converts the birth date into a date object and submits the
+        updated Customer instance to the repository.
+
+        Handles unique constraint violations for email addresses
+        and phone numbers and displays the corresponding messages.
         """
         Helpers.header("UPDATE CUSTOMER")
 
@@ -232,7 +268,19 @@ class CustomersMenu:
 
     def delete_customer(self):
         """
-        Delete a customer from the database based on its id. Demands confirmation from the user before  commiting.
+        Deletes an existing customer from the database.
+
+        Retrieves and displays all customers, then prompts the user
+        to select the customer to delete.
+
+        Displays the selected customer's information and requests
+        confirmation before proceeding with the deletion.
+
+        Cancels the operation if the user declines or provides an
+        empty response.
+
+        Handles database errors and displays an appropriate message
+        if the deletion cannot be completed.
         """
         Helpers.header("DELETE CUSTOMER")
 

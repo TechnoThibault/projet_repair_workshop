@@ -8,11 +8,25 @@ class CustomersRepository:
     """
 
     @classmethod
-    def get_customers(cls):
+    def get_customers(cls, person_id: bool = True):
+        """Retrieve the list of all customers.
+
+        Args:
+            person_id (bool, optional): Decide if the ID shown will be that of the customer of the person linked to them. Defaults to True.
+
+        Returns:
+            list[Customer]: List of all the customers inside the database.
+        """
         with Database().connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT p.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from customers c join persons p on c.person_id = p.id"
-            )
+            if person_id:
+
+                cursor.execute(
+                    "SELECT p.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from customers c join persons p on c.person_id = p.id"
+                )
+            else:
+                cursor.execute(
+                    "SELECT c.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from customers c join persons p on c.person_id = p.id"
+                )
 
             data = cursor.fetchall()
             customers = [Customer(*row) for row in data]
@@ -21,6 +35,15 @@ class CustomersRepository:
 
     @classmethod
     def register_customer(cls, customer: Customer):
+        """Add a customer to the database.
+
+        Args:
+            customer (Customer) : Data about a customer.
+
+        Returns:
+            int: ID of the newly created customer.
+
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -54,6 +77,15 @@ class CustomersRepository:
 
     @classmethod
     def update_customer(cls, customer: Customer):
+        """Update an existing customer with new values.
+
+        Args:
+            customer (Customer) : Data about a customer.
+
+        Returns:
+            int: number of rows updated.
+
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -84,6 +116,15 @@ class CustomersRepository:
 
     @classmethod
     def delete_customer(cls, customer: Customer):
+        """Delete an existing customer.
+
+        Args:
+            customer (Customer) : Data about a customer.
+
+        Returns:
+            int: number of rows updated.
+
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """

@@ -6,13 +6,21 @@ from models import Customer, Device, Repair, RepairStatus, Technician
 
 class RepairsRepository:
     """
-    Repository to access the database about the Repairs.
+    Repository responsible for managing repair records in the database.
     """
 
     @staticmethod
     def _map_row(row) -> Repair:
         """
-        Tool to construct a Repair object based on data from the database.
+        Maps a database row to a Repair instance.
+
+        Args:
+            row (dict): A dictionary containing repair, device,
+                customer, and technician information retrieved
+                from the database.
+
+        Returns:
+            Repair: A Repair instance populated with the database values.
         """
 
         customer = Customer(
@@ -40,14 +48,14 @@ class RepairsRepository:
 
         if row["technician_id"] is not None:
             technician = Technician(
-                id=row["customer_id"],
-                first_name=row["customer_first_name"],
-                last_name=row["customer_last_name"],
-                phone_number=row["customer_phone_number"],
-                email=row["customer_email"],
-                address=row["customer_address"],
-                birth_date=row["customer_birth_date"],
-                created_at=row["customer_created_at"],
+                id=row["technician_id"],
+                first_name=row["technician_first_name"],
+                last_name=row["technician_last_name"],
+                phone_number=row["technician_phone_number"],
+                email=row["technician_email"],
+                address=row["technician_address"],
+                birth_date=row["technician_birth_date"],
+                created_at=row["technician_created_at"],
             )
 
         return Repair(
@@ -63,6 +71,18 @@ class RepairsRepository:
 
     @classmethod
     def get_repairs(cls, status: RepairStatus | None = None):
+        """
+        Retrieves all repairs from the database, optionally filtered
+        by their status.
+
+        Args:
+            status (RepairStatus | None): Optional repair status used
+                to filter the results. If None, all repairs are retrieved.
+
+        Returns:
+            list[Repair]: A list of Repair instances ordered by their
+                database ID.
+        """
         with Database().connection.cursor(row_factory=dict_row) as cursor:
 
             query = """
@@ -122,3 +142,36 @@ class RepairsRepository:
             repairs = [RepairsRepository._map_row(row) for row in rows]
 
             return repairs
+
+    @classmethod
+    def add_repair(cls, repair: Repair):
+        """
+        Registers a new repair in the database.
+
+        Args:
+            repair (Repair): The repair instance containing the
+                associated device, optional technician, description,
+                status, and labor cost.
+
+        Returns:
+            int: The ID of the newly registered repair.
+        """
+        with Database().connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO repairs (device_id, technician_id, description, status, labor_cost)
+                VALUES 
+                (%s,%s,%s,%s,%s)
+                RETURNING ID
+                """,
+                (
+                    repair.device.id,
+                    repair.technician.id if repair.technician is not None else None,
+                    repair.description,
+                    repair.status,
+                    repair.labor_cost,
+                ),
+            )
+            repair_id = cursor.fetchone()[0]
+
+            return repair_id

@@ -15,8 +15,8 @@ class Repair:
         description: str,
         status: RepairStatus,
         labor_cost: float,
-        created_at: datetime,
-        updated_at: datetime,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
         technician: Technician | None = None,
         parts: list[RepairPart] | None = None,
         comments: list[RepairComment] | None = None,
@@ -27,6 +27,10 @@ class Repair:
         self.description = description
         self.status = status
         self.labor_cost = labor_cost
+        if created_at is None:
+            created_at = datetime.now()
+        if updated_at is None:
+            updated_at = datetime.now()
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -51,18 +55,40 @@ class Repair:
 
     def __str__(self) -> str:
         technician = str(self.technician) if self.technician else "Unassigned"
-        header = f"========================================================================================   Repair #{self.id}   ========================================================================================="
+
+        header = (
+            f"========================================"
+            f"   REPAIR #{self.id}   "
+            f"========================================"
+        )
+
+        separator = "=" * len(header)
+
+        total_parts_cost = sum(part.quantity * part.unit_price for part in self.parts)
+
         return (
             f"\n\n{header}"
-            f"\n{self.description}"
-            f"\n\n{self.status.name.replace('_', ' ').title()} | "
-            f" Labor: €{self.labor_cost:.2f} | "
-            f"Created: {self.created_at:%Y-%m-%d}\n"
-            f"│\n"
-            f"├── Technician: {technician}\n"
-            f"│\n"
-            f"└── Device: {self.device}\n"
-            f"{"=" * len(header)}"
+            f"\n\n{self.description}"
+            f"\n\n"
+            f"Status: {self.status.name.replace('_', ' ').title()} | "
+            f"Labor: €{self.labor_cost:.2f} | "
+            f"Parts: €{total_parts_cost:.2f}"
+            f"\nTotal: €{self.labor_cost + total_parts_cost:.2f}"
+            f"\nCreated: {self.created_at:%Y-%m-%d %H:%M} | "
+            f"Updated: {self.updated_at:%Y-%m-%d %H:%M}"
+            f"\n"
+            f"│"
+            f"\n├── Technician: {technician}"
+            f"\n│"
+            f"\n├── Device:"
+            f"\n│   {self.device}"
+            f"\n│"
+            f"\n├── Parts ({len(self.parts)}):"
+            f"{''.join(str(part) for part in self.parts) if self.parts else chr(10) + '    └── No parts assigned.'}"
+            f"\n│"
+            f"\n└── Comments ({len(self.comments)}):"
+            f"{''.join(str(comment) for comment in self.comments) if self.comments else chr(10) + '    └── No comments.'}"
+            f"\n{separator}"
         )
 
     @property
@@ -111,8 +137,6 @@ class Repair:
 
     @status.setter
     def status(self, status: RepairStatus):
-        if not isinstance(status, RepairStatus):
-            raise TypeError("Status must be a RepairStatus enum value.")
         self.__status = status
 
     @property
@@ -187,3 +211,22 @@ class Repair:
         if not isinstance(comment, RepairComment):
             raise TypeError("Comment must be a RepairComment instance.")
         self.__comments.remove(comment)
+
+    @classmethod
+    def validate_description(cls, value):
+        if not value.strip():
+            raise ValueError("Description cannot be empty.")
+
+    @classmethod
+    def validate_status(cls, value):
+        if value not in [status.value for status in RepairStatus]:
+            raise ValueError("The status is not correct.")
+
+    @classmethod
+    def valid_labor_cost(cls, value):
+        try:
+            value = float(value)
+            if value < 0:
+                raise ValueError("Labor cost must be equal or greater than zero.")
+        except ValueError:
+            raise ValueError("Labor cost must be a number.")

@@ -7,16 +7,33 @@ class RepairComment:
     def __init__(
         self,
         id: int,
-        technician: Technician,
         comment: str,
-        created_at: datetime,
-        updated_at: datetime,
+        technician: Technician | None = None,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
     ):
         self.id = id
         self.technician = technician
         self.comment = comment
+        if created_at is None:
+            created_at = datetime.now()
         self.created_at = created_at
+        if updated_at is None:
+            updated_at = datetime.now()
         self.updated_at = updated_at
+
+    def __str__(self) -> str:
+        technician = str(self.technician) if self.technician else "Unassigned"
+
+        return (
+            f"\n    ┌── Comment #{self.id}"
+            f"\n    │"
+            f"\n    │   {self.comment}"
+            f"\n    │"
+            f"\n    ├── Technician: {technician}"
+            f"\n    ├── Created: {self.created_at:%Y-%m-%d %H:%M}"
+            f"\n    └── Updated: {self.updated_at:%Y-%m-%d %H:%M}"
+        )
 
     @property
     def id(self) -> int:
@@ -34,7 +51,7 @@ class RepairComment:
 
     @technician.setter
     def technician(self, technician: Technician):
-        if not isinstance(technician, Technician):
+        if technician and not isinstance(technician, Technician):
             raise TypeError("Technician must be a Technician instance.")
         self.__technician = technician
 
@@ -78,3 +95,8 @@ class RepairComment:
             raise ValueError("Update date cannot be earlier than creation date.")
 
         self.__updated_at = updated_at
+
+    @classmethod
+    def validate_comment(cls, value):
+        if not value.strip():
+            raise ValueError("The comment cannot be empty.")

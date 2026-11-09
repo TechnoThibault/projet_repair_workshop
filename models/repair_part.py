@@ -8,6 +8,21 @@ class RepairPart:
         self.quantity = quantity
         self.unit_price = unit_price
 
+    def __str__(self) -> str:
+        header = f"   ┌── Part #{self.id}"
+
+        total_price = self.quantity * self.unit_price
+
+        return (
+            f"\n│{header}"
+            f"\n│   │"
+            f"\n│   │   {self.part}"
+            f"\n│   │"
+            f"\n│   ├── Quantity: {self.quantity}"
+            f"\n│   ├── Unit price: €{self.unit_price:.2f}"
+            f"\n│   └── Total price: €{total_price:.2f}"
+        )
+
     @property
     def id(self) -> int:
         return self.__id

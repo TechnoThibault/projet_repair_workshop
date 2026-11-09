@@ -12,7 +12,7 @@ class Device:
         model: str,
         serial_number: str,
         device_type: str,
-        created_at: datetime,
+        created_at: datetime | None = None,
     ):
         self.id = id
         self.customer = customer
@@ -20,13 +20,15 @@ class Device:
         self.model = model
         self.serial_number = serial_number
         self.device_type = device_type
+        if created_at is None:
+            created_at = datetime.now()
         self.created_at = created_at
 
     def __str__(self) -> str:
         return (
             f"{self.brand} {self.model} | Serial: {self.serial_number} | Device type: {self.device_type} | Created: {self.created_at}\n"
-            f"    │\n"
-            f"    └── Customer: {self.customer}"
+            f"│   │\n"
+            f"│   └── Customer: {self.customer}"
         )
 
     @property
@@ -102,3 +104,23 @@ class Device:
             raise ValueError("Creation date cannot be in the future.")
 
         self.__created_at = created_at
+
+    @classmethod
+    def validate_brand(cls, value):
+        if not value.strip():
+            raise ValueError("Brand cannot be empty.")
+
+    @classmethod
+    def validate_model(cls, value):
+        if not value.strip():
+            raise ValueError("Model cannot be empty.")
+
+    @classmethod
+    def validate_serial_number(cls, value):
+        if not value.strip():
+            raise ValueError("Serial number cannot be empty.")
+
+    @classmethod
+    def validate_device_type(cls, value):
+        if not value.strip():
+            raise ValueError("Device type cannot be empty.")

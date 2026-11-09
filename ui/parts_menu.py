@@ -9,10 +9,19 @@ from .menu import Menu
 
 class PartsMenu:
     """
-    Menu allowing an user to search, modify, add or delete data about parts.
+    Menu allowing users to search, modify, add, and delete part records.
     """
 
     def __init__(self, title: str):
+        """
+        Initializes the parts menu.
+
+        Sets the menu title, defines the available actions, and displays
+        the menu to allow users to manage parts.
+
+        Args:
+            title (str): The title displayed at the top of the menu.
+        """
         self.title = title
         self.menu_actions = {
             "0": {"description": "Close this menu", "action": "back"},
@@ -31,7 +40,13 @@ class PartsMenu:
 
     def show_parts(self):
         """
-        Show a list of all the parts to the user.
+        Displays all parts stored in the database.
+
+        Retrieves the part records through the PartsRepository and
+        displays them in a formatted table, including their names,
+        descriptions, prices, stock quantities, and timestamps.
+
+        If no parts are found, an informational message is displayed.
         """
         parts = PartsRepository.get_parts()
 
@@ -63,7 +78,16 @@ class PartsMenu:
 
     def add_part(self):
         """
-        Add a new part to the database. Every input must be validated before being accepted.
+        Registers a new part in the database.
+
+        Prompts the user to enter the part's name, description, unit price,
+        and stock quantity. Each input is validated before being used
+        to construct a Part instance.
+
+        Converts the unit price and stock quantity into their
+        corresponding numeric types before registering the part.
+
+        Handles database errors by displaying an appropriate message.
         """
         Helpers.header("REGISTER PART")
         print("Enter data concerning the part:")
@@ -92,7 +116,21 @@ class PartsMenu:
 
     def update_part(self):
         """
-        Update an existing part with new data. Each field can be modified, and if the user enters an empty string, the previous value will be used.
+        Updates an existing part's information.
+
+        Retrieves and displays all available parts, then prompts the user
+        to select the part to update.
+
+        Allows individual fields to be modified while retaining their
+        existing values when an empty input is provided. Each new value
+        is validated before being accepted.
+
+        Converts the unit price and stock quantity into their
+        corresponding numeric types before submitting the updated
+        Part instance to the repository.
+
+        Displays a success or failure message depending on the number
+        of database rows affected. Handles database errors.
         """
         Helpers.header("UPDATE PART")
 
@@ -188,7 +226,19 @@ class PartsMenu:
 
     def delete_part(self):
         """
-        Delete a part from the database based on its id. Demands confirmation from the user before  commiting.
+        Deletes an existing part from the database.
+
+        Retrieves and displays all available parts, then prompts the user
+        to select the part to delete.
+
+        Displays the selected part's information and requests confirmation
+        before proceeding with the deletion.
+
+        Cancels the operation if the user declines or provides an
+        empty response.
+
+        Displays a success or failure message depending on the number
+        of database rows affected. Handles database errors.
         """
         Helpers.header("DELETE PART")
 
@@ -269,4 +319,10 @@ class PartsMenu:
             print("There was an issue deleting the user.")
 
     def header(self, title: str):
+        """
+        Displays a formatted section header.
+
+        Args:
+            title (str): The title to display between separator lines.
+        """
         print(f"\n=== {title} ===")

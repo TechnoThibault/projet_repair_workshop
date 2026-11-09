@@ -4,15 +4,33 @@ from models import Technician
 
 class TechniciansRepository:
     """
-    Repository to access the database about the technicians.
+    Repository responsible for managing technician records in the database.
     """
 
     @classmethod
-    def get_technicians(cls):
+    def get_technicians(cls, person_id: bool = True):
+        """
+        Retrieves all technicians from the database.
+
+        Args:
+            person_id (bool): Determines which ID is retrieved:
+                - True: Uses the person ID.
+                - False: Uses the technician ID.
+
+        Returns:
+            list[Technician]: A list of Technician instances containing
+                the retrieved technician information.
+        """
         with Database().connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT p.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from technicians t join persons p on t.person_id = p.id"
-            )
+            if person_id:
+
+                cursor.execute(
+                    "SELECT p.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from technicians t join persons p on t.person_id = p.id"
+                )
+            else:
+                cursor.execute(
+                    "SELECT t.id,p.first_name, p.last_name, p.phone_number, p.email, p.address, p.birth_date, p.created_at from technicians t join persons p on t.person_id = p.id"
+                )
 
             data = cursor.fetchall()
             technicians = [Technician(*row) for row in data]
@@ -21,6 +39,16 @@ class TechniciansRepository:
 
     @classmethod
     def register_technician(cls, technician: Technician):
+        """
+        Registers a new technician in the database.
+
+        Args:
+            technician (Technician): The Technician instance containing
+                the personal information required for registration.
+
+        Returns:
+            int: The ID of the newly registered technician.
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -54,6 +82,17 @@ class TechniciansRepository:
 
     @classmethod
     def update_technician(cls, technician: Technician):
+        """
+        Updates an existing technician's personal information.
+
+        Args:
+            technician (Technician): The Technician instance containing
+                the ID and updated personal information.
+
+        Returns:
+            int: The number of database rows affected by the update.
+                Returns 0 if no matching person was found.
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -84,6 +123,17 @@ class TechniciansRepository:
 
     @classmethod
     def delete_technician(cls, technician: Technician):
+        """
+        Deletes a technician's personal record from the database.
+
+        Args:
+            technician (Technician): The Technician instance containing
+                the ID of the person record to delete.
+
+        Returns:
+            int: The number of database rows affected by the deletion.
+                Returns 0 if no matching person was found.
+        """
         with Database().connection.cursor() as cursor:
             cursor.execute(
                 """

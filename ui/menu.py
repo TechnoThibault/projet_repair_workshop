@@ -5,15 +5,32 @@ from helpers import Helpers
 
 class Menu:
     """
-    Reusable Menu object to show choices to the user and call different actions based on it.
-    Each action will be ordered as defined in the menus and the action will be called from there.
+    Reusable menu component responsible for displaying options and
+    executing the corresponding actions based on user input.
+
+    Provides a consistent navigation mechanism across the application,
+    allowing users to navigate between menus or close the application.
     """
 
     def __init__(self, title: str, options: dict):
+        """
+        Initializes a menu with a title and a collection of available options.
+
+        Args:
+            title (str): The title displayed at the top of the menu.
+            options (dict): A dictionary containing the available menu options.
+                Each entry must contain a description and an associated action.
+        """
         self.title = title
         self.options = options
 
     def display(self):
+        """
+        Displays the menu and its available options.
+
+        Clears the terminal screen, displays the menu title, and prints
+        each option with its corresponding description.
+        """
         self.__clear_screen()
         Helpers.header(self.title)
 
@@ -22,9 +39,17 @@ class Menu:
 
     def get_choice(self):
         """
-        Keep proposing choices to the user until they decide to leave the current menu or the application.
-        The user needs to choose one of the options set by the application to go to the different menus.
-        The action will be called based on the user's choice.
+        Handles user navigation through the menu.
+
+        Continuously displays the menu and prompts the user to select
+        an available option.
+
+        Executes the corresponding action when a valid option is selected.
+        Invalid choices are rejected and the user is prompted again.
+
+        Terminates the menu loop when the user selects the back or close
+        action. After executing an action, waits for user confirmation
+        before displaying the menu again.
         """
         while True:
             self.display()
@@ -51,6 +76,11 @@ class Menu:
 
     def __clear_screen(self):
         """
-        Allows the screen to be emptied.
+        Clears the terminal screen.
+
+        Uses the appropriate system command depending on the operating
+        system:
+            - Windows: cls
+            - Linux and macOS: clear
         """
         os.system("cls" if os.name == "nt" else "clear")
